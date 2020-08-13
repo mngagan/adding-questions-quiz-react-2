@@ -11,8 +11,8 @@ function ShowQuestion({ ...props} ) {
   }
 
   return (
-    <div className="todo-app">
-      <h1>{currentQues.name}</h1>
+    <div>
+      <h4>{currentQues.name}</h4>
       <Form>
       {Object.values(currentQues.options).map((opt, index)=> {
         return <Form.Field>

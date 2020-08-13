@@ -13,6 +13,7 @@ import Quiz from './components/quiz'
 import "semantic-ui-css/semantic.min.css";
 import { Provider } from "react-redux";
 import store from "./redux/store";
+import ViewResult from './components/viewResults'
 
 import { ToastContainer } from "react-toastify";
 
@@ -40,6 +41,9 @@ export default function App1() {
                 <Link to="/getQuestions">Get questions</Link>
               </li>
               <li>
+                <Link to="/viewResult">view results</Link>
+              </li>
+              <li>
                 <Link to="/quiz/:id">Quiz</Link>
               </li>
             </ul>
@@ -53,6 +57,8 @@ export default function App1() {
             </Route>
             <Route path="/getQuestions" component = {GetQuestions}></Route>
             <Route path="/quiz/:id" component={(props) => <Quiz {...props}/>}></Route>
+            <Route path="/viewResult" component={(props) => <ViewResult {...props}/>}></Route>
+
             <Route path="/">
               <h2>Home</h2>
             </Route>

@@ -22,7 +22,6 @@ const getInitialCurrentQuestion = () => {
 class AddQuestions extends Component {
   constructor(props) {
     super(props)
-    console.log('in const', this.props)
     this.questionNameRef = false;
     super();
     this.state = {
@@ -60,7 +59,6 @@ class AddQuestions extends Component {
   };
 
   handleUploadQuestion = () => {
-    console.log('in upload question', this.state.questions)
     this.setState({
       isUploading: true
     });
@@ -91,7 +89,6 @@ class AddQuestions extends Component {
       })
       .catch(function(error) {
         // handle error
-        console.log("error", error);
         that.setState({
           isUploading: false
         });
@@ -128,7 +125,6 @@ class AddQuestions extends Component {
   };
 
   render() {
-    console.log('in render', this.props.questionsAnswers.length)
     window.state = this.state;
     let { currentQuestion } = this.state;
     return (

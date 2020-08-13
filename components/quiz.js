@@ -6,28 +6,49 @@ import { SET_TOPICS, SET_QUESTIONS } from "../redux/actionTypes";
 import { setTopics } from "../redux/actions";
 import ShowQuestion from "./showQuestion";
 import { toast } from "../utils/toast";
-import { Input, Modal, Button } from 'semantic-ui-react'
+import {
+  Input,
+  Modal,
+  Button,
+  Header,
+  Segment,
+  Grid,
+  Icon
+} from "semantic-ui-react";
+import $ from "jquery";
 const axios = require("axios");
 
 function Quiz({ ...props }) {
   const [quizIndex, setQuizIndex] = useState(0);
   const [quizInfo, setQuizInfo] = useState({ topic: "def", questions: [] });
   const [isFetched, setIsFetched] = useState(false);
-  const [userName, setUserName] = useState('');
-  const [open, setOpen] = React.useState(false)
-  let quizId = props.match.params.id == ':id' ? '7647dcd7-95ae-4e66-ae53-8ca2a6729da9' : props.match.params.id
+  // const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState("test");
+  // const [isNameEntered, setIsNameEntered] = useState(false);
+  const [isNameEntered, setIsNameEntered] = useState(true);
+  const [open, setOpen] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  let quizId =
+    props.match.params.id == ":id"
+      ? "7647dcd7-95ae-4e66-ae53-8ca2a6729da9"
+      : props.match.params.id;
+  if (props.match.params.id != ":id") {
+    $(".q-nav").hide();
+  }
 
   useEffect(() => {
     console.log("in comp did mount", props);
     axios
       .get(
-        "https://hwjiaglg1m.execute-api.ap-south-1.amazonaws.com/dev/quiz-1/" + quizId
+        "https://hwjiaglg1m.execute-api.ap-south-1.amazonaws.com/dev/quiz-1/" +
+          quizId
       )
       .then(function(response) {
-        console.log('in get quiz info', response.data);
-        if(!response.data.success){
-          toast.error('quiz error')
-          return
+        console.log("in get quiz info", response.data);
+        if (!response.data.success) {
+          toast.error("quiz error");
+          return;
         }
         setQuizInfo(response.data.data);
 
@@ -44,6 +65,9 @@ function Quiz({ ...props }) {
         // handle error
         console.log("error---", error);
       });
+    return () => {
+      $(".q-nav").show();
+    };
   }, []);
 
   const handleChangeQuestion = arg => {
@@ -59,73 +83,121 @@ function Quiz({ ...props }) {
     result.questions[quizIndex].userAnswer = arg.value;
     setQuizInfo(result);
   };
-  
+
   const handleSubmit = () => {
-    if(userName.length < 3){
-      toast.error('Please enter username. It should have atleast 3 charecters', userName)
-      return
+    if (userName.length < 3) {
+      toast.error(
+        "Please enter username. It should have atleast 3 charecters",
+        userName
+      );
+      return;
     }
-    let correctAnswers = 0
+    setIsSubmitting(true);
+    let correctAnswers = 0;
     quizInfo.questions.map((q, index) => {
-      console.log(q.answer, q.userAnswer)
-      if(q.answer == q.userAnswer){
-        ++correctAnswers
+      console.log(q.answer, q.userAnswer);
+      if (q.answer == q.userAnswer) {
+        ++correctAnswers;
       }
-    })
-    let percentage = (correctAnswers > 0 && quizInfo.questions.length > 0) ? (correctAnswers/quizInfo.questions.length) * 100 : 0.00
-    percentage = percentage.toFixed(2)
+    });
+    let percentage =
+      correctAnswers > 0 && quizInfo.questions.length > 0
+        ? (correctAnswers / quizInfo.questions.length) * 100
+        : 0.0;
+    percentage = percentage.toFixed(2);
     let param = {
-      correctAnswers, 
-      type : 'submitAnswers',
-      currentQuizId:quizId,
+      correctAnswers,
+      type: "submitAnswers",
+      currentQuizId: quizId,
       userName,
       percentage
     };
     let that = this;
     axios
       .post(
-        // " https://hwjiaglg1m.execute-api.ap-south-1.amazonaws.com/dev/quiz-1",
         "https://pqt1i0myrj.execute-api.ap-south-1.amazonaws.com/dev/quiz-1/",
         param
       )
-      .then((response) => {
-        if(!response.data.success){
-          toast.error('failed')
-          return
+      .then(response => {
+        if (!response.data.success) {
+          toast.error("failed");
+          return;
         }
-        toast.success('uploaded succesfuly')
+        setIsSubmitting(false);
+        toast.success("uploaded succesfuly");
       })
       .catch(() => {
-        toast.error('submit failed')
-      })
-    // toast.success(correctAnswers)
-  }
+        setIsSubmitting(false);
+        toast.error("submit failed");
+      });
+  };
+  const handleContinue = () => {
+    if (userName.length > 3) {
+      setIsNameEntered(true);
+    } else {
+      toast.error("Please enter username. It should have atleast 3 charecters");
+    }
+  };
+  const quizWelcome = () => {
+    return (
+      <div style={{ padding: "10px" }}>
+        <Segment inverted>
+          <Header as="h1" textAlign="center" color="blue">
+            Welcome to Quiz
+          </Header>
+          <Header as="h2" textAlign="center">
+            {quizInfo.topic}
+          </Header>
+
+          <div style={{ textAlign: "center" }}>
+            <Input
+              placeholder="your name here..."
+              value={userName}
+              onChange={(e, { value }) => {
+                setUserName(value);
+              }}
+              style={{ paddingBottom: "5px" }}
+            />
+            <br />
+            <Button primary onClick={() => handleContinue()}>
+              Continue
+            </Button>
+          </div>
+        </Segment>
+      </div>
+    );
+  };
   return (
     <div>
-    {isFetched &&  <div>
-      <Button primary onClick={() => handleChangeQuestion("prev")}>
-        Previous question
-      </Button>
-      {quizInfo.topic}
-      <Button primary onClick={() => handleChangeQuestion("next")}>
-        Next question
-      </Button>
-      <Button primary onClick={() => handleSubmit()}>
-        Submit
-      </Button>
-      user name : <Input placeholder='your name here..' value = {userName} onChange = {(e, {value}) => {setUserName(value)}} />
-      
-      <div>question {quizIndex + 1} of {quizInfo.questions.length}</div>
-        <ShowQuestion
-          quizIndex={quizIndex}
-          updateUserAnswer={updateUserAnswer}
-          currentQues={quizInfo.questions[quizIndex]}
-        />
-      </div>}
-      {
-        !isFetched && <div>Loading...</div>
-      }
-      
+      {isFetched && !isNameEntered && quizWelcome()}
+      {isFetched && isNameEntered && (
+        <Segment>
+          <Header as="h2" floated="left">
+            {quizInfo.topic}
+          </Header>
+          <Header as="h5" floated="right">
+            question {quizIndex + 1} of {quizInfo.questions.length}
+          </Header>
+          <br />
+          <br />
+          <br />
+          <ShowQuestion
+            quizIndex={quizIndex}
+            updateUserAnswer={updateUserAnswer}
+            currentQues={quizInfo.questions[quizIndex]}
+          />
+          <Button primary onClick={() => handleChangeQuestion("prev")}>
+            Prev
+          </Button>
+          <Button primary onClick={() => handleChangeQuestion("next")}>
+            Next
+          </Button>
+          <Button primary onClick={() => handleSubmit()} loading={isSubmitting}>
+            Submit
+          </Button>
+        </Segment>
+      )}
+      {!isFetched && <div>Loading...</div>}
     </div>
   );
 }
