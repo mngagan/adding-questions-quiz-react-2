@@ -1,0 +1,11 @@
+var xhr = new XMLHttpRequest();
+    xhr.open(
+      "POST",
+      "https://pqt1i0myrj.execute-api.ap-south-1.amazonaws.com/dev/quiz-1/"
+    );
+    xhr.onreadystatechange = function(event) {
+      console.log(event.target.response);
+      document.getElementById("test").innerHTML = event.target.response;
+    };
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(JSON.stringify(param1));
