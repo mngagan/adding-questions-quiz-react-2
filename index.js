@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
 import "./style.css";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { validateQuestion } from "./utils/validateQuestion";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
