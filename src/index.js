@@ -1,27 +1,26 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
-// import "../style.css";
-// import { ToastContainer } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
-// import { validateQuestion } from "../utils/validateQuestion";
-// import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-// import AddQuestions from "../components/addQuestions";
-// import flux from "../flux/index.js";
-// import GetQuestions from "../components/getQuestions";
-// import PreviewQuestions from '../components/previewQuestions'
-// import Quiz from '../components/quiz'
-// import "semantic-ui-css/semantic.min.css";
-// import { Provider } from "react-redux";
-// import store from "../redux/store";
-// import ViewResult from '../components/viewResults'
+import "./style.css";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { validateQuestion } from "./utils/validateQuestion";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import AddQuestions from "./components/addQuestions";
+import flux from "./flux/index.js";
+import GetQuestions from "./components/getQuestions";
+import PreviewQuestions from './components/previewQuestions'
+import Quiz from './components/quiz'
+import "semantic-ui-css/semantic.min.css";
+import { Provider } from "react-redux";
+import store from "./redux/store";
+import ViewResult from './components/viewResults'
 
 const getFlux = () => {
   console.log(flux);
 };
 
 export default function App1() {
-  return (<div>test</div>)
-  return_not (
+  return (
     <Provider store={store}>
       <Router>
         <div className="container-fluid">
